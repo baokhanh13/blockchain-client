@@ -1,7 +1,11 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Sidebar from '../../components/Sidebar';
 import NavbarContainer from '../../containers/Navbar';
+import { makeStyles } from '@material-ui/core/styles';
+import { Card, CardContent } from '@material-ui/core';
+import { removeSelectedMenu, setSelectedMenu } from '../../store/config';
 
 const Container = styled.div`
 	min-height: calc(100vh - 4rem);
@@ -11,7 +15,6 @@ const Container = styled.div`
 
 const Title = styled.h2`
 	font-size: 1.6rem;
-	margin: 1rem 0 2rem 0;
 	line-height: 1.4;
 	color: blue;
 `;
@@ -24,17 +27,96 @@ const Button = styled.button`
 	border: none;
 	outline: none;
 	border-radius: 0.5rem;
-	margin-bottom: 1rem;
+    max-width: 200px;
+    margin: 1rem auto;
 `;
 
+const MainContainer = styled.div`
+	flex-direction: row;
+	display: flex;
+`;
+
+const CardTitle = styled.p`
+	font-size: 1.4rem;
+	color: #ccc;
+`;
+
+const CardText = styled.p`
+	font-size: 1.2rem;
+	overflow-wrap: break-word;
+`;
+
+const CardBody = styled.div`
+	display: flex;
+	padding: 0 4rem;
+	margin: 1.2rem;
+	justify-content: space-around;
+`;
+
+const Body = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+`;
+
+const MiningContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin: 1rem 10rem;
+`;
+
+const MiningText = styled.h4`
+    font-size: 1.6rem;
+    font-style: bold;
+`;
+
+const useStyles = makeStyles({
+	card: {
+		maxWidth: 400,
+	},
+});
+
 const Dashboard = () => {
+	const classes = useStyles();
 	const wallet = useSelector((state) => state.wallet);
+	const config = useSelector((state) => state.config);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setSelectedMenu('dashboard'));
+		return () => {
+			dispatch(removeSelectedMenu());
+		};
+	}, []);
+
 	return (
 		<>
 			<NavbarContainer />
 			<Container>
-				<Title>My Dashboard </Title>
-                <div>{wallet.publicKey}</div>
+				<MainContainer>
+					<Sidebar config={config} />
+					<Body>
+						<CardBody>
+							<Card className={classes.card}>
+								<CardContent>
+									<CardTitle>Address</CardTitle>
+									<CardText>{wallet.publicKey}</CardText>
+								</CardContent>
+							</Card>
+							<Card className={classes.card}>
+								<CardContent>
+									<CardTitle>Balance</CardTitle>
+									<CardText>{wallet.publicKey}</CardText>
+								</CardContent>
+							</Card>
+						</CardBody>
+						<MiningContainer>
+                            <Title>Mining</Title>
+                            <MiningText>You can start mining here. Each time you mine a block, you are rewarded by 100 eCoins</MiningText>
+                            <Button>Mining</Button>
+						</MiningContainer>
+					</Body>
+				</MainContainer>
 			</Container>
 		</>
 	);
