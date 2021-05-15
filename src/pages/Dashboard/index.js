@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Sidebar from '../../components/Sidebar';
@@ -6,6 +6,7 @@ import NavbarContainer from '../../containers/Navbar';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardContent } from '@material-ui/core';
 import { removeSelectedMenu, setSelectedMenu } from '../../store/config';
+import socket from '../../utils/socket';
 
 const Container = styled.div`
 	min-height: calc(100vh - 4rem);
@@ -72,12 +73,13 @@ const MiningText = styled.h4`
 
 const useStyles = makeStyles({
 	card: {
-		maxWidth: 400,
+		width: 400,
 	},
 });
 
 const Dashboard = () => {
 	const classes = useStyles();
+	const [walletBalance, setWalletBalance] = useState(0);
 	const wallet = useSelector((state) => state.wallet);
 	const config = useSelector((state) => state.config);
 	const dispatch = useDispatch();
@@ -88,6 +90,21 @@ const Dashboard = () => {
 			dispatch(removeSelectedMenu());
 		};
 	}, []);
+
+	useEffect(() => {
+		socket.emit('get-balance', wallet.publicKey);
+	}, []);
+
+	useEffect(() => {
+		socket.on('balance', balance => {
+			setWalletBalance(balance);
+		})
+	}, []);
+
+
+	const miningBlock = () => {
+		socket.emit('mine', wallet.publicKey);
+	};
 
 	return (
 		<>
@@ -106,14 +123,14 @@ const Dashboard = () => {
 							<Card className={classes.card}>
 								<CardContent>
 									<CardTitle>Balance</CardTitle>
-									<CardText>{wallet.publicKey}</CardText>
+									<CardText>{walletBalance}</CardText>
 								</CardContent>
 							</Card>
 						</CardBody>
 						<MiningContainer>
                             <Title>Mining</Title>
                             <MiningText>You can start mining here. Each time you mine a block, you are rewarded by 100 eCoins</MiningText>
-                            <Button>Mining</Button>
+                            <Button onClick={miningBlock}>Mining</Button>
 						</MiningContainer>
 					</Body>
 				</MainContainer>

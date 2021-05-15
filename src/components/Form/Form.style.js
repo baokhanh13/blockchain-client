@@ -66,7 +66,7 @@ export const Button = styled.button`
 export const Error = styled.p`
     font-size: 1.4rem;
     color: red;
-    margin-bottom: 1.625em;
+    margin-bottom: 1em;
 `;
 
 export const Bottom = styled.div`

@@ -10,20 +10,13 @@ const Wrapper = styled.div`
     flex: ${(props) => props.flex};
 `;
 
-const Title = styled.h1`
-	font-size: 2rem;
-	text-transform: uppercase;
-	font-weight: 500;
-	color: #909ca8;
-`;
-
 
 const Sidebar = ({ flex, config: {selected, categories} }) => {
 	return (
 		<Wrapper flex={flex}>
 			<StickyBox offset={20}>
 				{categories.map(category => (
-					<Tag title={category} selected={selected === category.toLowerCase()} link={`${category.toLowerCase()}`} />
+					<Tag key={category} title={category} selected={selected === category.toLowerCase()} link={`${category.toLowerCase()}`} />
 				))}
 			</StickyBox>
 		</Wrapper>

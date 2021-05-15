@@ -3,10 +3,9 @@ import styled from 'styled-components/macro';
 import SignupForm from '../../containers/SignupForm';
 import img from '../../images/crossword.png';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Modal from 'react-modal';
 import history from '../../utils/history';
-import { removeKey } from '../../store/wallet';
 
 const customStyles = {
 	content: {
@@ -72,7 +71,6 @@ const Button = styled.button`
 
 const Signup = () => {
 	const [modalIsOpen, setModalOpen] = React.useState(false);
-	const dispatch = useDispatch();
 	const wallet = useSelector((state) => state.wallet);
 
 	function openModal() {
@@ -90,11 +88,6 @@ const Signup = () => {
 		}
 	}, [wallet.privateKey]);
 
-	React.useEffect(() => {
-		return () => {
-			dispatch(removeKey());
-		};
-	}, []);
 
 	return (
 		<Container>

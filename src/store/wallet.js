@@ -22,7 +22,8 @@ const slice = createSlice({
 			state.loading = true;
 		},
 		loginSuccess: (state, action) => {
-			state.publicKey = action.payload;
+			state.publicKey = action.payload.publicKey;
+			state.privateKey = action.payload.privateKey;
 			state.loading = false;
 		},
 		signupSuccess: (state, action) => {
@@ -44,14 +45,10 @@ const slice = createSlice({
 			state.errorMsg = null;
 			state.privateKey = null;
 		},
-		removePrivateKey: (state, action) => {
-			state.privateKey = null;
-		},
 	},
 });
 
 const {
-	removePrivateKey,
 	loginRequest,
 	signupRequest,
 	loginSuccess,
@@ -66,7 +63,7 @@ export const login = (credentials) => async (dispatch) => {
 		dispatch(loginRequest());
 		const res = await api.post('/wallets/login', credentials);
 		const { publicKey } = res.data;
-		dispatch(loginSuccess(publicKey));
+		dispatch(loginSuccess({ publicKey, privateKey: credentials.privateKey }));
 		localStorage.setItem('key', publicKey);
 		history.push('/dashboard');
 	} catch (error) {
@@ -88,10 +85,6 @@ export const signup = (credentials) => async (dispatch) => {
 export const logout = () => (dispatch) => {
 	dispatch(logoutSuccess());
 	localStorage.removeItem('key');
-};
-
-export const removeKey = () => (dispatch) => {
-	dispatch(removePrivateKey());
 };
 
 export default slice.reducer;

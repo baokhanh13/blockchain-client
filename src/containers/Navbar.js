@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Navbar } from '../components';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/wallet';

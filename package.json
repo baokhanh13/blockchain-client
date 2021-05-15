@@ -19,6 +19,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-sticky-box": "^0.9.3",
+    "socket.io-client": "^4.1.1",
     "styled-components": "^5.2.0"
   },
   "scripts": {

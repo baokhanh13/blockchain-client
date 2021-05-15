@@ -1,11 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Sidebar from '../../components/Sidebar';
 import NavbarContainer from '../../containers/Navbar';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import {
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from '@material-ui/core';
 import { removeSelectedMenu, setSelectedMenu } from '../../store/config';
+import socket from '../../utils/socket';
 
 const Container = styled.div`
 	min-height: calc(100vh - 4rem);
@@ -33,35 +42,28 @@ const Body = styled.div`
 
 const useStyles = makeStyles({
 	table: {
-        minWidth: 650,
-    },
-    container: {
-        marginTop: 20,
-    },
-    title: {
-        fontSize: 14,
-    },
-    text: {
-        fontSize: 12,
-    }
+		minWidth: 650,
+	},
+	container: {
+		marginTop: 20,
+	},
+	title: {
+		fontSize: 14,
+	},
+	text: {
+		fontSize: 12,
+		whiteSpace: 'normal',
+		wordWrap: 'break-word',
+		maxWidth: 300,
+	},
+	cell: {},
 });
-
-function createData(name, calories, fat, carbs, protein) {
-	return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData('Eclair', 262, 16.0, 24, 6.0),
-	createData('Cupcake', 305, 3.7, 67, 4.3),
-	createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 
 const History = () => {
 	const classes = useStyles();
 	const wallet = useSelector((state) => state.wallet);
 	const config = useSelector((state) => state.config);
+	const [txs, setTxs] = useState([]);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -71,6 +73,35 @@ const History = () => {
 		};
 	}, []);
 
+	useEffect(() => {
+		socket.emit('get-transactions', wallet.publicKey);
+	}, []);
+
+	useEffect(() => {
+		socket.on('transactions', (transactions) => setTxs(transactions));
+	}, []);
+
+	function renderTxs() {
+		console.log(txs);
+		if (txs.length === 0) return null;
+		return txs.map((tx, i) => {
+			if (tx === null) return;
+			return (
+				<TableRow key={i}>
+					<TableCell component="th" scope="row" className={classes.text}>
+						{tx.fromAddress || 'eCoin'}
+					</TableCell>
+					<TableCell align="left" className={classes.text}>
+						{tx.toAddress}
+					</TableCell>
+					<TableCell align="right" className={classes.text}>
+						{tx.amount}
+					</TableCell>
+				</TableRow>
+			)
+		});
+	}
+
 	return (
 		<>
 			<NavbarContainer />
@@ -79,7 +110,10 @@ const History = () => {
 					<Sidebar config={config} />
 					<Body>
 						<Title>Your transactions history</Title>
-						<TableContainer component={Paper} className={classes.container}>
+						<TableContainer
+							component={Paper}
+							className={classes.container}
+						>
 							<Table
 								className={classes.table}
 								aria-label="simple table"
@@ -87,47 +121,23 @@ const History = () => {
 								<TableHead>
 									<TableRow>
 										<TableCell className={classes.title}>
-											Dessert (100g serving)
+											From Adress
 										</TableCell>
-										<TableCell align="right" className={classes.title}>
-											Calories
+										<TableCell
+											align="left"
+											className={classes.title}
+										>
+											To Address
 										</TableCell>
-										<TableCell align="right" className={classes.title}>
-											Fat&nbsp;(g)
-										</TableCell>
-										<TableCell align="right" className={classes.title}>
-											Carbs&nbsp;(g)
-										</TableCell>
-										<TableCell align="right" className={classes.title}>
-											Protein&nbsp;(g)
+										<TableCell
+											align="right"
+											className={classes.title}
+										>
+											Amount
 										</TableCell>
 									</TableRow>
 								</TableHead>
-								<TableBody>
-									{rows.map((row) => (
-										<TableRow key={row.name}>
-											<TableCell
-												component="th"
-                                                scope="row"
-                                                className={classes.text}
-											>
-												{row.name}
-											</TableCell>
-											<TableCell align="right" className={classes.text}>
-												{row.calories}
-											</TableCell>
-											<TableCell align="right" className={classes.text}>
-												{row.fat}
-											</TableCell>
-											<TableCell align="right" className={classes.text}>
-												{row.carbs}
-											</TableCell>
-											<TableCell align="right" className={classes.text}>
-												{row.protein}
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
+								<TableBody>{renderTxs()}</TableBody>
 							</Table>
 						</TableContainer>
 					</Body>
