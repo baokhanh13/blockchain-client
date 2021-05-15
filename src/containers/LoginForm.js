@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from '../components';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/wallet';
 
 const LoginForm = () => {
@@ -9,6 +9,7 @@ const LoginForm = () => {
 	const { isDirty } = formState;
 	const dispatch = useDispatch();
 
+	const wallet = useSelector(state => state.wallet);
 
 	const onSubmit = (data) => {
 		dispatch(login(data));
@@ -16,6 +17,7 @@ const LoginForm = () => {
 	return (
 		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Form.Title>Login</Form.Title>
+			{wallet.errorMsg && <Form.Error>{wallet.errorMsg}</Form.Error>}
 			<Form.Input
 				id="privatekey"
 				type="text"

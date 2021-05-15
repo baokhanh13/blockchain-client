@@ -19,6 +19,13 @@ export const Title = styled.h2`
     text-align: center;
 `;
 
+export const Subtitle = styled.p`
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #ccc
+`;
+
 export const Input = styled.input`
     text-align: left;
     display: block;

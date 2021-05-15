@@ -17,6 +17,7 @@ const SignupForm = () => {
 	return (
 		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Form.Title>Register</Form.Title>
+			<Form.Subtitle>Fill your password and then we will send you your private key</Form.Subtitle>
 			<Form.Input
 				id="password"
 				name="password"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, Container, Title, Bottom, StyledLink, Error } from './Form.style';
+import { Button, Input, Container, Title, Bottom, StyledLink, Error, Subtitle } from './Form.style';
 
 const Form = ({ children, ...restProps }) => {
 	return <Container {...restProps}>{children}</Container>;
@@ -31,6 +31,10 @@ Form.Link = ({ children, ...restProps }) => {
 
 Form.Error = ({ children, ...restProps }) => {
     return <Error {...restProps}>{children}</Error>
+}
+
+Form.Subtitle = ({ children, ...restProps }) => {
+	return <Subtitle {...restProps}>{children}</Subtitle>
 }
 
 export default Form;
